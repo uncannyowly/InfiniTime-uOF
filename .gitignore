@@ -55,3 +55,8 @@ src/arm-none-eabi
 node_modules
 package.json
 package-lock.json
+
+# 1.16.1F fork: local build + simulator artifacts
+build-*/
+*.log
+spiNorFlash.raw

@@ -73,5 +73,45 @@
       ],
       "bpp": 1,
       "size": 25
+   },
+   "antonio_bold_64": {
+      "sources": [
+         {
+            "file": "Antonio-Bold.ttf",
+            "range": "0x30-0x3a"
+         }
+      ],
+      "bpp": 2,
+      "size": 64
+   },
+   "antonio_bold_24": {
+      "sources": [
+         {
+            "file": "Antonio-Bold.ttf",
+            "range": "0x20-0x5a, 0xb0"
+         }
+      ],
+      "bpp": 2,
+      "size": 24
+   },
+   "antonio_bold_16": {
+      "sources": [
+         {
+            "file": "Antonio-Bold.ttf",
+            "range": "0x20-0x5a"
+         }
+      ],
+      "bpp": 2,
+      "size": 16
+   },
+   "jetbrains_mono_bold_14": {
+      "sources": [
+         {
+            "file": "JetBrainsMono-Bold.ttf",
+            "range": "0x20-0x7e, 0xb0"
+         }
+      ],
+      "bpp": 1,
+      "size": 14
    }
 }

@@ -56,6 +56,10 @@ namespace Pinetime {
       Infineat,
       CasioStyleG7710,
       PrideFlag,
+      Lcars,
+      Cyberdeck,
+      LcarsNeon,
+      CyberdeckNetOps,
     };
 
     template <Apps>
