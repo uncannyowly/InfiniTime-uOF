@@ -24,6 +24,7 @@ namespace Pinetime {
       Car,
       Minesweeper,
       Tanks,
+      Snake,
       Twos,
       HeartRate,
       Navigation,

@@ -10,6 +10,7 @@
 #include "displayapp/screens/Car.h"
 #include "displayapp/screens/Minesweeper.h"
 #include "displayapp/screens/Tanks.h"
+#include "displayapp/screens/Snake.h"
 #include "displayapp/screens/Tile.h"
 #include "displayapp/screens/ApplicationList.h"
 #include "displayapp/screens/WatchFaceDigital.h"

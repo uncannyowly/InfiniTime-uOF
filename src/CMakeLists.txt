@@ -372,7 +372,9 @@ list(APPEND SOURCE_FILES
         displayapp/screens/Car.cpp
         displayapp/screens/Minesweeper.cpp
         displayapp/screens/Tanks.cpp
+        displayapp/screens/Snake.cpp
         components/car/ObdSimulator.cpp
+        components/snake/SnakeGame.cpp
         displayapp/screens/StopWatch.cpp
         displayapp/screens/BatteryIcon.cpp
         displayapp/screens/BleIcon.cpp

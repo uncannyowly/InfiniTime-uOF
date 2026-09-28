@@ -11,7 +11,7 @@
          },
          {
             "file": "SpaceInvaders.ttf",
-            "range": "0xe001"
+            "range": "0xe001-0xe002"
          }
       ],
       "bpp": 1,

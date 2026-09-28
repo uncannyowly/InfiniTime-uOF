@@ -1,7 +1,7 @@
 # InfiniTime-uOF
 
 A personal fork of [InfiniTime](https://github.com/InfiniTimeOrg/InfiniTime) **1.16.1** for the
-[PineTime](https://pine64.org/devices/pinetime/), carrying four extra watch faces, three games,
+[PineTime](https://pine64.org/devices/pinetime/), carrying four extra watch faces, four games,
 a storage monitor and an OBD-II car dashboard.
 
 Builds report their version as `<upstream>+uo<N>` (currently on upstream 1.16.1), so you can tell
@@ -48,6 +48,8 @@ That panel is decorative. It is driven by a small PRNG and does nothing.
 |---|---|---|
 | ![Spaced Perpetrators](screenshots/space-invaders.png) | ![Minepeepers](screenshots/minesweeper.png) | ![Tanked](screenshots/tanks-aim.png) |
 | **Spaced Perpetrators** | **Minepeepers** | **Tanked** |
+| ![Snake](screenshots/snake.png) | ![Snake in play](screenshots/snake-play.png) | ![Snake game over](screenshots/snake-over.png) |
+| **Snake** | **Snake, playing** | **Snake, game over** |
 
 **Spaced Perpetrators.** A *Space Invaders* homage. Descending rows of three enemy types,
 destructible bunkers, a drifting UFO, score and lives. Uses sprite images from the external
@@ -65,6 +67,11 @@ Because Tanked uses press-and-hold on the button, this fork adds an opt-in hook 
 `OnButtonDown()` / `OnButtonUp()` deliver raw presses, and `WantsRawButton()` lets an app stop
 DisplayApp from exiting it on a long press. The default is `false` and only Tanked overrides it,
 so every stock app behaves exactly as upstream.
+
+**Snake**: swipe to steer, eat to grow, don't hit the walls or yourself. It speeds up with every
+meal. Tap to play again after a game over; the side button quits. Best score is kept until the
+watch restarts. The game rules are in `src/components/snake/` with a host-side test in
+`tests/snake/`, runnable on any machine with g++.
 
 These are original implementations written against the original games' mechanics. No third-party
 game code is included.

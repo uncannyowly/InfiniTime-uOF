@@ -51,6 +51,11 @@ edits: `DisplayApp.cpp`, `Screen.h`, `Messages.h`, `SystemTask.cpp`, `SystemInfo
 
 ## Unreleased (towards 1.16.1+uo2)
 
+- New game: **Snake**. Swipe to steer, tap to play again, button to quit. Rules live in
+  `components/snake/SnakeGame` with no LVGL dependency and are covered by a host-side test in
+  `tests/snake/`. The board is one 1-bit image updated two cells per step, so the snake can grow
+  to the full 20x18 grid without an object per segment. Launcher icon is a new pixel-art glyph at
+  `U+E002` in `SpaceInvaders.ttf`. Costs about 2.8 KB of flash.
 - Adopted the `+uo<N>` versioning scheme described above. Dev builds identify themselves on
   the watch.
 - System Info and firmware validation show the version on its own line, since dev version
