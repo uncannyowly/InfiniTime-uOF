@@ -1,71 +1,125 @@
-# InfiniTime 1.16.1F
+# InfiniTime 1.16.1uOF
 
-A one-off fork of [InfiniTime](https://github.com/InfiniTimeOrg/InfiniTime) **1.16.1** for the
-[PineTime](https://pine64.org/devices/pinetime/), with four extra watch faces compiled in.
+A personal fork of [InfiniTime](https://github.com/InfiniTimeOrg/InfiniTime) **1.16.1** for the
+[PineTime](https://pine64.org/devices/pinetime/), carrying four extra watch faces, three games,
+a storage monitor and an OBD-II car dashboard.
 
-The `F` is for *faces*. Nothing else is changed — this is upstream 1.16.1 (commit `e172b9b3`) plus
-four new `Screen` subclasses, one font, and the registration boilerplate to hook them up. No
-upstream behaviour is modified, no features are removed.
+`uOF` is the version suffix this build reports, so you can tell it apart from stock 1.16.1 in
+Settings → System Info and over BLE. Upstream behaviour is otherwise unchanged — nothing is
+removed, and no stock feature is modified.
+
+## Watch faces
+
+All four are drawn entirely in code from coloured LVGL rectangles and text. There are no bitmap
+assets, so nothing extra has to be flashed to the external SPI flash and `IsAvailable()` returns
+true unconditionally.
 
 | | |
 |---|---|
 | ![LCARS](screenshots/lcars.png) | ![LCARS Neon](screenshots/lcars-neon.png) |
 | **LCARS** | **LCARS Neon** |
-| ![Cyberdeck](screenshots/cyberdeck.png) | ![Cyberdeck NetOps](screenshots/cyberdeck-netops.png) |
-| **Cyberdeck** | **Cyberdeck NetOps** |
+| ![Cybrdek](screenshots/cyberdeck.png) | ![Cybrdek Rnnr](screenshots/cyberdeck-netops.png) |
+| **Cybrdek** | **Cybrdek Rnnr** |
 
-## The faces
+**LCARS / LCARS Neon** — a *TNG*-style console frame adapted to 240×240. A curved elbow sweeps
+from the header into a left sidebar carrying weather, battery, steps and heart rate. The header
+shows the date, a `SD <year>.<day-of-year>` stardate, a `COMM` indicator that dims when Bluetooth
+drops, and an `MSG` flag on unread notifications.
 
-All four are drawn entirely in code — coloured LVGL rectangles and text labels. There are no
-bitmap assets, so nothing has to be flashed to the external SPI flash for them to work, and
-`IsAvailable()` returns true unconditionally.
-
-### LCARS / LCARS Neon
-
-A *Star Trek: TNG* console frame adapted to a 240×240 square. A curved elbow sweeps from the
-header into a left sidebar, which carries four data rows — weather, battery, step count and heart
-rate — each with its own colour block and caption. The header shows the date, a stardate-styled
-`SD <year>.<day-of-year>`, a `COMM` indicator that dims when Bluetooth drops, and an `MSG` flag
-that appears on unread notifications. Seconds and AM/PM sit as small captions inside the sidebar.
-
-Both variants are the same 253-line implementation. `LcarsPalette` is a struct of eight semantic
-colour roles (`primary`, `header`, `alert`, `dim`, …), so the layout is skinned twice:
-`lcarsClassic` is the TNG amber/mauve/periwinkle set, `lcarsNeon` swaps in magenta and cyan.
-Adding a third variant means adding one more `constexpr LcarsPalette`.
+Both variants are one implementation. `LcarsPalette` is a struct of eight semantic colour roles,
+so the layout is skinned twice — `lcarsClassic` in TNG amber/mauve/periwinkle, `lcarsNeon` in
+magenta and cyan. A third colourway is one more `constexpr LcarsPalette`.
 
 LVGL 7 has no per-corner border radius, so the elbows are built by overlaying squared-off blocks
-on a rounded rectangle and carving the concave inner curve with a black rounded rect — cheaper
-than masking, and visually identical at this size.
+on a rounded rectangle and carving the concave inner curve with a black rounded rect.
 
-### Cyberdeck / Cyberdeck NetOps
-
-A green-on-black terminal readout with bracketed panel headers. **Cyberdeck** is a large digital
-clock over a 2×2 grid of power, steps, heart rate and weather panels, each with a small bar meter.
-**NetOps** replaces the big clock with a miniature analogue clock beside an animated panel:
-a scrolling waveform, a rolling four-byte hex dump, and a progress meter cycling through
+**Cybrdek / Cybrdek Rnnr** — a green-on-black terminal readout with bracketed panel headers.
+Cybrdek is a large digital clock over a 2×2 grid of power, steps, heart rate and weather, each
+with a bar meter. Rnnr replaces the clock with a miniature analogue one beside an animated panel:
+a scrolling waveform, a rolling four-byte hex dump, and a meter cycling through
 `SCAN → BREACH → DECRYPT → UPLINK`.
 
-To be clear, that panel is **decoration**. It is driven by a small PRNG and does nothing; the
-watch is not scanning or breaching anything. It just looks the part.
+That panel is decorative. It is driven by a small PRNG and does nothing.
+
+## Games
+
+| | | |
+|---|---|---|
+| ![Spaced Perpetrators](screenshots/space-invaders.png) | ![Minepeepers](screenshots/minesweeper.png) | ![Tanked](screenshots/tanks-aim.png) |
+| **Spaced Perpetrators** | **Minepeepers** | **Tanked** |
+
+**Spaced Perpetrators** — a *Space Invaders* homage. Descending rows of three enemy types,
+destructible bunkers, a drifting UFO, score and lives. Uses sprite images from the external
+resource pack (`si_*.png`).
+
+**Minepeepers** — Minesweeper. Tap to reveal, long-press to flag, with a mine counter and timer.
+The grid is sized for fingertips rather than a mouse pointer.
+
+**Tanked** — two-tank artillery over procedurally generated terrain. Hold the side button to charge
+shot power and release to fire; double-tap opens a shell menu (Basic Bomb, Heavy Shell, Nuke,
+Cluster, Roller, Digger, Sniper, Napalm and more). Blasts carve craters out of the landscape.
+Swipe down to quit.
+
+Because Tanked uses press-and-hold on the button, this fork adds an opt-in hook to `Screen`:
+`OnButtonDown()` / `OnButtonUp()` deliver raw presses, and `WantsRawButton()` lets an app stop
+DisplayApp from exiting it on a long press. The default is `false` and only Tanked overrides it,
+so every stock app behaves exactly as upstream.
+
+These are original implementations written against the original games' mechanics. No third-party
+game code is included.
+
+## Vol Space
+
+![Vol Space](screenshots/vol-space.png)
+
+A settings screen showing used and free space on both of the watch's volumes — the internal
+application flash and the external SPI flash holding fonts and images — as pie charts with exact
+figures.
+
+The internal total is read at runtime from `TotalFlashSize`, exported by both linker scripts
+(`gcc_nrf52.ld` and `gcc_nrf52-mcuboot.ld`) rather than hardcoded, so it stays correct if the
+memory map changes.
+
+Useful when adding features to a build that is already close to its flash ceiling.
+
+## Car (OBD-II dashboard)
+
+![HUD](screenshots/car-hud.png)
+
+A menu leading to a speed dial, a boost/vacuum gauge, and a multi-stat HUD showing coolant,
+intake, RPM, throttle, O₂ sensor, battery voltage, speed and manifold pressure.
+
+**The BLE adapter transport is not implemented yet.** Readings come from `ObdSimulator`, the only
+current implementation of the `ObdSource` interface in `src/components/car/`. Demo mode is off by
+default, so on a real watch the app reports that no adapter is connected rather than showing
+invented numbers.
+
+The display code reads from `ObdSource`, so a real transport can be added underneath without
+touching the screens. When it is written it will be **BLE only** — the PineTime's nRF52832 has no
+Bluetooth Classic radio, so Bluetooth Classic ELM327 dongles cannot work with this hardware
+regardless of firmware.
 
 ## Fonts
 
 The LCARS faces use [Antonio](https://fonts.google.com/specimen/Antonio) Bold — a condensed
-grotesque, much closer to the LCARS register than InfiniTime's stock JetBrains Mono. It is
-generated at build time from `Antonio-Bold.ttf` into three sizes (64 / 24 / 16) at 2 bits per
-pixel, so the large numerals are antialiased rather than the stock 1-bit.
-
-Antonio is licensed under the SIL Open Font License; see
-[`Antonio-OFL.txt`](src/displayapp/fonts/Antonio-OFL.txt).
+grotesque much closer to the LCARS register than InfiniTime's stock JetBrains Mono. It is
+generated at build time into three sizes (64 / 24 / 16) at 2 bits per pixel, so the large numerals
+are antialiased rather than the stock 1-bit.
 
 Antonio's generated glyph ranges are uppercase-only, which is why the weather condition string is
 upper-cased at runtime before display.
 
+Antonio is licensed under the SIL Open Font License; see
+[`Antonio-OFL.txt`](src/displayapp/fonts/Antonio-OFL.txt).
+
+`SpaceInvaders.ttf` is a single-glyph icon font (`U+E001`) merged into `jetbrains_mono_bold_20`
+to provide the Spaced Perpetrators launcher icon.
+
 ## Building
 
 Standard InfiniTime build. You need the ARM toolchain, the nRF5 SDK,
-[`lv_font_conv`](https://github.com/lvgl/lv_font_conv), and Python with `Pillow` and
-`adafruit-nrfutil`:
+[`lv_font_conv`](https://github.com/lvgl/lv_font_conv), and a Python environment with `Pillow`,
+`adafruit-nrfutil`, and the packages in [`tools/mcuboot/requirements.txt`](tools/mcuboot/requirements.txt):
 
 ```sh
 cmake -S . -B build \
@@ -78,43 +132,52 @@ cmake -S . -B build \
 cmake --build build --target pinetime-mcuboot-app -j"$(nproc)"
 ```
 
-The flashable package lands at `build/src/pinetime-mcuboot-app-dfu-1.16.1.zip`, or grab it from
-[Releases](../../releases).
+The flashable package lands at `build/src/pinetime-mcuboot-app-dfu-1.16.1uOF.zip`, or grab it from
+[Releases](../../releases/latest).
 
-To build a subset of faces, override the watch face list at configure time:
+The `uOF` suffix comes from `VERSION_SUFFIX` in [`CMakeLists.txt`](CMakeLists.txt) — CMake's
+`project(VERSION)` only accepts numeric components, so the suffix is appended separately and flows
+through to `versionString` and every artifact filename.
+
+To build a subset, override the app and watch face lists at configure time:
 
 ```sh
 cmake -S . -B build -DENABLE_WATCHFACES="WatchFace::Digital, WatchFace::Lcars" ...
 ```
 
 See [upstream's documentation](https://github.com/InfiniTimeOrg/InfiniTime/blob/main/doc/buildAndProgram.md)
-for full build and flashing instructions, and [`README.InfiniTime.md`](README.InfiniTime.md) for
-the original project README.
+for full build and flashing instructions, and [`README.InfiniTime.md`](README.InfiniTime.md) for the
+original project README.
 
 ## Installing
 
-Flash `pinetime-mcuboot-app-dfu-1.16.1.zip` over Bluetooth with any InfiniTime-compatible
-updater — [Gadgetbridge](https://gadgetbridge.org/), [InfiniLink](https://github.com/InfiniTimeOrg/InfiniLink),
-or [Siglo](https://github.com/alexr4535/siglo). The watch reports its version as `1.16.1F` in
-Settings → System Info so you can tell it apart from stock.
+Two files, both from the [latest release](../../releases/latest), flashed over Bluetooth with any
+InfiniTime-compatible updater — [Gadgetbridge](https://gadgetbridge.org/),
+[InfiniLink](https://github.com/InfiniTimeOrg/InfiniLink) or [Siglo](https://github.com/alexr4535/siglo):
 
-This is a normal InfiniTime image with a valid bootloader header — reverting is just flashing an
+1. **`pinetime-mcuboot-app-dfu-1.16.1uOF.zip`** — the firmware.
+2. **`infinitime-resources-1.16.1uOF.zip`** — the resource pack for the external flash.
+
+The resource pack is required for **Spaced Perpetrators**: its sprites live on the external flash,
+and the game hides itself from the launcher until they are present — the same mechanism upstream
+uses for the Infineat watch face. Everything else works from the firmware alone.
+
+This is a normal InfiniTime image with a valid bootloader header, so reverting is just flashing an
 official release back over it.
 
 ## Status and support
 
-This is a personal one-off, pinned to 1.16.1. It is not tracking upstream and there is no promise
-of rebases onto later releases. It has not been submitted to InfiniTime and is not endorsed by
-the InfiniTime project or by Pine64.
+A personal build, pinned to 1.16.1 and not tracking upstream. It has not been submitted to
+InfiniTime and is not endorsed by or affiliated with the InfiniTime project or Pine64.
 
-Bug reports about *these four faces* are welcome. Anything else belongs
+Bug reports about *the additions in this fork* are welcome. Anything else belongs
 [upstream](https://github.com/InfiniTimeOrg/InfiniTime/issues).
 
 ## Licence
 
-GPLv3, inherited from InfiniTime — see [`LICENSE`](LICENSE). The new watch faces are GPLv3 on the
-same terms. Antonio is under the SIL OFL, as noted above.
+GPLv3, inherited from InfiniTime — see [`LICENSE`](LICENSE). Everything added here is GPLv3 on the
+same terms.
 
 All credit for the firmware itself goes to the
 [InfiniTime contributors](https://github.com/InfiniTimeOrg/InfiniTime/graphs/contributors); this
-fork only adds four screens to their work.
+fork only adds screens to their work.

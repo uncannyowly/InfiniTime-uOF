@@ -20,6 +20,10 @@ namespace Pinetime {
       Music,
       Paint,
       Paddle,
+      SpaceInvaders,
+      Car,
+      Minesweeper,
+      Tanks,
       Twos,
       HeartRate,
       Navigation,
@@ -45,6 +49,7 @@ namespace Pinetime {
       SettingShakeThreshold,
       SettingBluetooth,
       SettingOTA,
+      SettingVolSpace,
       Error
     };
 

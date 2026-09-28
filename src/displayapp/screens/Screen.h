@@ -30,6 +30,19 @@ namespace Pinetime {
           return false;
         }
 
+        // Raw button press/release, delivered only in addition to the normal actions.
+        virtual void OnButtonDown() {
+        }
+
+        virtual void OnButtonUp() {
+        }
+
+        // If true, DisplayApp will not exit this app on a long button press, so the app can
+        // use press-and-hold itself. The app is then responsible for its own exit (e.g. a swipe).
+        virtual bool WantsRawButton() const {
+          return false;
+        }
+
         /** @return false if the event hasn't been handled by the app, true if it has been handled */
         // Returning true will cancel lvgl tap
         virtual bool OnTouchEvent(TouchEvents /*event*/) {

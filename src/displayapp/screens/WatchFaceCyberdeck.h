@@ -122,7 +122,7 @@ namespace Pinetime {
     template <>
     struct WatchFaceTraits<WatchFace::Cyberdeck> {
       static constexpr WatchFace watchFace = WatchFace::Cyberdeck;
-      static constexpr const char* name = "Cyberdeck";
+      static constexpr const char* name = "Cybrdek";
 
       static Screens::Screen* Create(AppControllers& controllers) {
         return new Screens::WatchFaceCyberdeck(controllers.dateTimeController,
@@ -144,7 +144,7 @@ namespace Pinetime {
     template <>
     struct WatchFaceTraits<WatchFace::CyberdeckNetOps> {
       static constexpr WatchFace watchFace = WatchFace::CyberdeckNetOps;
-      static constexpr const char* name = "Cyberdeck NetOps";
+      static constexpr const char* name = "Cybrdek Rnnr";
 
       static Screens::Screen* Create(AppControllers& controllers) {
         return new Screens::WatchFaceCyberdeck(controllers.dateTimeController,

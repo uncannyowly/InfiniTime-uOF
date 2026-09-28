@@ -50,6 +50,7 @@
 #include "displayapp/screens/settings/SettingChimes.h"
 #include "displayapp/screens/settings/SettingHeartRate.h"
 #include "displayapp/screens/settings/SettingShakeThreshold.h"
+#include "displayapp/screens/settings/SettingVolSpace.h"
 #include "displayapp/screens/settings/SettingBluetooth.h"
 #include "displayapp/screens/settings/SettingOTA.h"
 
@@ -443,6 +444,12 @@ void DisplayApp::Refresh() {
           lvgl.CancelTap();
         }
       } break;
+      case Messages::ButtonDown:
+        currentScreen->OnButtonDown();
+        break;
+      case Messages::ButtonUp:
+        currentScreen->OnButtonUp();
+        break;
       case Messages::ButtonPushed:
         if (!currentScreen->OnButtonPushed()) {
           if (currentApp == Apps::Clock) {
@@ -453,6 +460,9 @@ void DisplayApp::Refresh() {
         }
         break;
       case Messages::ButtonLongPressed:
+        if (currentScreen->WantsRawButton()) {
+          break; // app captures the button (e.g. hold-to-charge); it exits itself
+        }
         if (currentApp != Apps::Clock) {
           if (currentApp == Apps::Notifications) {
             LoadNewScreen(Apps::Clock, DisplayApp::FullRefreshDirections::Up);
@@ -466,6 +476,9 @@ void DisplayApp::Refresh() {
         }
         break;
       case Messages::ButtonLongerPressed:
+        if (currentScreen->WantsRawButton()) {
+          break; // app captures the button
+        }
         // Create reboot app and open it instead
         LoadNewScreen(Apps::SysInfo, DisplayApp::FullRefreshDirections::Up);
         break;
@@ -624,6 +637,9 @@ void DisplayApp::LoadScreen(Apps app, DisplayApp::FullRefreshDirections directio
       break;
     case Apps::SettingChimes:
       currentScreen = std::make_unique<Screens::SettingChimes>(settingsController);
+      break;
+    case Apps::SettingVolSpace:
+      currentScreen = std::make_unique<Screens::SettingVolSpace>(filesystem);
       break;
     case Apps::SettingShakeThreshold:
       currentScreen = std::make_unique<Screens::SettingShakeThreshold>(settingsController, motionController, *systemTask);

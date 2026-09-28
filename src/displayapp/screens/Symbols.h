@@ -15,6 +15,11 @@ namespace Pinetime {
         static constexpr const char* bell = "\xEF\x83\xB3";
         static constexpr const char* info = "\xEF\x84\xA9";
         static constexpr const char* list = "\xEF\x80\xBA";
+      static constexpr const char* hdd = "\xEF\x82\xA0"; // 0xf0a0
+      static constexpr const char* spaceInvader = "\xEE\x80\x81"; // 0xe001, SpaceInvaders.ttf
+      static constexpr const char* car = "\xEF\x86\xB9"; // 0xf1b9
+      static constexpr const char* mine = "\xEF\x87\xA2"; // 0xf1e2, bomb
+      static constexpr const char* tank = "\xEF\x81\x9B"; // 0xf05b, crosshairs
         static constexpr const char* sun = "\xEF\x86\x85";
         static constexpr const char* check = "\xEF\x95\xA0";
         static constexpr const char* music = "\xEF\x80\x81";

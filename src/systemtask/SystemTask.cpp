@@ -286,6 +286,8 @@ void SystemTask::Work() {
           Controllers::ButtonActions action = Controllers::ButtonActions::None;
           if (nrf_gpio_pin_read(Pinetime::PinMap::Button) == 0) {
             action = buttonHandler.HandleEvent(Controllers::ButtonHandler::Events::Release);
+            // Raw release, for apps that capture the button (e.g. hold-to-charge)
+displayApp.PushMessage(Applications::Display::Messages::ButtonUp);
           } else {
             action = buttonHandler.HandleEvent(Controllers::ButtonHandler::Events::Press);
             // This is for faster wakeup, sacrificing special longpress and doubleclick handling while sleeping
@@ -294,6 +296,8 @@ void SystemTask::Work() {
               GoToRunning();
               break;
             }
+            // Raw press, delivered in addition to the debounced actions
+displayApp.PushMessage(Applications::Display::Messages::ButtonDown);
           }
           HandleButtonAction(action);
         } break;

@@ -11,6 +11,8 @@ namespace Pinetime {
         UpdateBleConnection,
         TouchEvent,
         ButtonPushed,
+        ButtonDown,
+        ButtonUp,
         ButtonLongPressed,
         ButtonLongerPressed,
         ButtonDoubleClicked,

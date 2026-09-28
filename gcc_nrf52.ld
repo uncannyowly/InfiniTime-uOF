@@ -43,6 +43,9 @@ MEMORY
   RAM (rwx) :  ORIGIN = 0x20000000, LENGTH = 64K
 }
 
+/* Size of the application flash region, read at runtime by the Vol Space settings screen */
+TotalFlashSize = LENGTH(FLASH);
+
 SECTIONS
 {
   .noinit(NOLOAD):
