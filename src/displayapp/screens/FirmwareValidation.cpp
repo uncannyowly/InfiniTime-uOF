@@ -30,7 +30,8 @@ FirmwareValidation::FirmwareValidation(Pinetime::Controllers::FirmwareValidator&
   labelVersion = lv_label_create(lv_scr_act(), nullptr);
   lv_label_set_recolor(labelVersion, true);
   lv_label_set_text_fmt(labelVersion,
-                        "#808080 Version# %lu.%lu.%lu%s\n"
+                        "#808080 Version#\n"
+                        "%lu.%lu.%lu%s\n"
                         "#808080 Short Ref# %s\n",
                         Version::Major(),
                         Version::Minor(),

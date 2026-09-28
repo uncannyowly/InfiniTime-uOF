@@ -5,7 +5,12 @@ set(CMAKE_TRY_COMPILE_TARGET_TYPE STATIC_LIBRARY)
 
 project(pinetime VERSION 1.16.1 LANGUAGES C CXX ASM)
 # Appended to the numeric version for this custom build (e.g. 1.16.1F)
-set(VERSION_SUFFIX "uOF")
+# uo fork versioning (see CHANGELOG.uo.md).
+# Releases are <upstream>+uo<N>; any other build is <upstream>+uo<N>.dev<commits>.
+# FORK_REVISION is the fork release being worked towards: bump it right after tagging a release,
+# and reset it to 1 when rebasing onto a new upstream version.
+set(FORK_ID "uo")
+set(FORK_REVISION 2)
 
 set(CMAKE_C_STANDARD 99)
 set(CMAKE_CXX_STANDARD 20)
@@ -45,6 +50,47 @@ execute_process(COMMAND git rev-parse --short HEAD
                 RESULT_VARIABLE PROJECT_GIT_COMMIT_HASH_SUCCESS)
 
 string(STRIP "${PROJECT_GIT_COMMIT_HASH}" PROJECT_GIT_COMMIT_HASH)
+
+# A build is a release only when HEAD is exactly at v<upstream>+uo<N> with a clean tree.
+# Otherwise it is a dev build, numbered by commits since the previous uo release on this
+# upstream base (or since the upstream tag itself, before the first one).
+set(FORK_RELEASE_TAG "v${PROJECT_VERSION}+${FORK_ID}${FORK_REVISION}")
+set(VERSION_SUFFIX "+${FORK_ID}${FORK_REVISION}")
+execute_process(COMMAND git describe --tags --exact-match --match "${FORK_RELEASE_TAG}" HEAD
+                WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+                RESULT_VARIABLE FORK_AT_RELEASE_TAG
+                OUTPUT_QUIET ERROR_QUIET)
+execute_process(COMMAND git diff --quiet HEAD
+                WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+                RESULT_VARIABLE FORK_TREE_DIRTY
+                OUTPUT_QUIET ERROR_QUIET)
+if(NOT FORK_AT_RELEASE_TAG EQUAL 0 OR NOT FORK_TREE_DIRTY EQUAL 0)
+  execute_process(COMMAND git describe --tags --abbrev=0 --match "v${PROJECT_VERSION}+${FORK_ID}*" HEAD
+                  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+                  OUTPUT_VARIABLE FORK_BASE_TAG
+                  RESULT_VARIABLE FORK_BASE_FOUND
+                  ERROR_QUIET)
+  string(STRIP "${FORK_BASE_TAG}" FORK_BASE_TAG)
+  if(NOT FORK_BASE_FOUND EQUAL 0)
+    set(FORK_BASE_TAG "${PROJECT_VERSION}")
+  endif()
+  execute_process(COMMAND git rev-list --count "${FORK_BASE_TAG}..HEAD"
+                  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+                  OUTPUT_VARIABLE FORK_DEV_COMMITS
+                  RESULT_VARIABLE FORK_DEV_COUNT_OK
+                  ERROR_QUIET)
+  string(STRIP "${FORK_DEV_COMMITS}" FORK_DEV_COMMITS)
+  if(NOT FORK_DEV_COUNT_OK EQUAL 0)
+    set(FORK_DEV_COMMITS 0)
+  endif()
+  set(VERSION_SUFFIX "${VERSION_SUFFIX}.dev${FORK_DEV_COMMITS}")
+endif()
+
+# Re-run configure after every commit or checkout so the dev number stays current on
+# incremental builds.
+if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/.git/logs/HEAD")
+  set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/.git/logs/HEAD")
+endif()
 
 message("PROJECT_GIT_COMMIT_HASH_SUCCESS? " ${PROJECT_GIT_COMMIT_HASH_SUCCESS})
 
