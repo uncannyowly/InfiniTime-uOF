@@ -51,6 +51,9 @@ edits: `DisplayApp.cpp`, `Screen.h`, `Messages.h`, `SystemTask.cpp`, `SystemInfo
 
 ## Unreleased (towards 1.16.1+uo2)
 
+- Minepeepers is no longer built by default: it wasn't playable on a 240x240 screen with touch
+  as the only input. The code stays in the tree; its line in `src/displayapp/apps/CMakeLists.txt`
+  is commented out, the same way upstream parks its Motion app.
 - New game: **Snake**. Swipe to steer, tap to play again, button to quit. Rules live in
   `components/snake/SnakeGame` with no LVGL dependency and are covered by a host-side test in
   `tests/snake/`. The board is one 1-bit image updated two cells per step, so the snake can grow

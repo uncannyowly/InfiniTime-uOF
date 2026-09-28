@@ -1,7 +1,7 @@
 # InfiniTime-uOF
 
 A personal fork of [InfiniTime](https://github.com/InfiniTimeOrg/InfiniTime) **1.16.1** for the
-[PineTime](https://pine64.org/devices/pinetime/), carrying four extra watch faces, four games,
+[PineTime](https://pine64.org/devices/pinetime/), carrying four extra watch faces, three games,
 a storage monitor and an OBD-II car dashboard.
 
 Builds report their version as `<upstream>+uo<N>` (currently on upstream 1.16.1), so you can tell
@@ -56,7 +56,9 @@ destructible bunkers, a drifting UFO, score and lives. Uses sprite images from t
 resource pack (`si_*.png`).
 
 **Minepeepers.** Minesweeper. Tap to reveal, long-press to flag, with a mine counter and timer.
-The grid is sized for fingertips rather than a mouse pointer.
+**Not built since `1.16.1+uo2`:** on a 240x240 screen with touch as the only input it wasn't
+fun to play. The code stays in `src/displayapp/screens/Minesweeper.*`; to build it anyway,
+uncomment its line in `src/displayapp/apps/CMakeLists.txt` and configure a fresh build directory.
 
 **Tanked.** Two-tank artillery over procedurally generated terrain. Hold the side button to charge
 shot power and release to fire; double-tap opens a shell menu (Basic Bomb, Heavy Shell, Nuke,
